@@ -1,0 +1,28 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm/
+
+# TypeScript
+out/
+dist/
+*.tsbuildinfo
+
+# VSCode
+.vscode/
+.history/
+*.vsix
+
+# Audio / Temp files
+*.wav
+*.mp3
+
+# Secrets
+.env
+*groqApiKey*
+
+# System
+.DS_Store
+Thumbs.db

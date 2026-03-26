@@ -1,0 +1,241 @@
+{
+  "name": "codewhisper",
+  "displayName": "CodeWhisper — Accessibility for Visually Impaired",
+  "description": "Full voice-enabled coding assistant for visually impaired developers. Speak to navigate, understand, debug, and write code.",
+  "version": "1.0.0",
+  "icon": "media/icon.png",
+  "publisher": "codewhisper",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other",
+    "Programming Languages"
+  ],
+  "keywords": [
+    "accessibility",
+    "voice",
+    "blind",
+    "visually impaired",
+    "screen reader",
+    "AI",
+    "groq"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "codewhisper.showFeatures",
+        "title": "CodeWhisper: Show Features & Voice Commands Dashboard",
+        "icon": "$(info)"
+      },
+      {
+        "command": "codewhisper.toggleListening",
+        "title": "CodeWhisper: Toggle Voice Listening",
+        "icon": "$(mic)"
+      },
+      {
+        "command": "codewhisper.readCurrentLine",
+        "title": "CodeWhisper: Read Current Line"
+      },
+      {
+        "command": "codewhisper.readFile",
+        "title": "CodeWhisper: Read Entire File"
+      },
+      {
+        "command": "codewhisper.explainCode",
+        "title": "CodeWhisper: Explain Selected Code / Function"
+      },
+      {
+        "command": "codewhisper.fixError",
+        "title": "CodeWhisper: Fix Current Error (AI)"
+      },
+      {
+        "command": "codewhisper.readErrors",
+        "title": "CodeWhisper: Read All Errors & Warnings"
+      },
+      {
+        "command": "codewhisper.summarizeFile",
+        "title": "CodeWhisper: Summarize This File"
+      },
+      {
+        "command": "codewhisper.generateCode",
+        "title": "CodeWhisper: Generate Code from Description"
+      },
+      {
+        "command": "codewhisper.commentCode",
+        "title": "CodeWhisper: Auto-Comment Selected Code"
+      },
+      {
+        "command": "codewhisper.generateTests",
+        "title": "CodeWhisper: Generate Tests for Function"
+      },
+      {
+        "command": "codewhisper.nextError",
+        "title": "CodeWhisper: Jump to Next Error"
+      },
+      {
+        "command": "codewhisper.prevError",
+        "title": "CodeWhisper: Jump to Previous Error"
+      },
+      {
+        "command": "codewhisper.readOutline",
+        "title": "CodeWhisper: Read File Outline"
+      },
+      {
+        "command": "codewhisper.securityAudit",
+        "title": "CodeWhisper: Security Audit (AI)"
+      },
+      {
+        "command": "codewhisper.complexityAnalysis",
+        "title": "CodeWhisper: Complexity Analysis (AI)"
+      },
+      {
+        "command": "codewhisper.stopSpeaking",
+        "title": "CodeWhisper: Stop Speaking"
+      },
+      {
+        "command": "codewhisper.openSettings",
+        "title": "CodeWhisper: Open Settings"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "codewhisper.toggleListening",
+        "key": "ctrl+shift+v",
+        "mac": "cmd+shift+v"
+      },
+      {
+        "command": "codewhisper.readCurrentLine",
+        "key": "ctrl+shift+l",
+        "mac": "cmd+shift+l"
+      },
+      {
+        "command": "codewhisper.explainCode",
+        "key": "ctrl+shift+e",
+        "mac": "cmd+shift+e"
+      },
+      {
+        "command": "codewhisper.fixError",
+        "key": "ctrl+shift+f",
+        "mac": "cmd+shift+f"
+      },
+      {
+        "command": "codewhisper.readErrors",
+        "key": "ctrl+shift+r",
+        "mac": "cmd+shift+r"
+      },
+      {
+        "command": "codewhisper.stopSpeaking",
+        "key": "escape",
+        "when": "codewhisper.speaking"
+      }
+    ],
+    "configuration": {
+      "title": "CodeWhisper Accessibility",
+      "properties": {
+        "codewhisper.groqApiKey": {
+          "type": "string",
+          "default": "",
+          "description": "Your Groq API key for voice and AI features."
+        },
+        "codewhisper.ttsRate": {
+          "type": "number",
+          "default": 1.1,
+          "minimum": 0.5,
+          "maximum": 2.0,
+          "description": "Speech rate for text-to-speech (1.0 = normal)."
+        },
+        "codewhisper.ttsPitch": {
+          "type": "number",
+          "default": 1.0,
+          "minimum": 0.5,
+          "maximum": 2.0,
+          "description": "Pitch for text-to-speech."
+        },
+        "codewhisper.ttsVolume": {
+          "type": "number",
+          "default": 1.0,
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "Volume for text-to-speech."
+        },
+        "codewhisper.alertVolume": {
+          "type": "number",
+          "default": 0.6,
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "Volume for sound alerts (errors, warnings, etc.)."
+        },
+        "codewhisper.announceErrors": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically announce new errors in the active file."
+        },
+        "codewhisper.announceOnCursorMove": {
+          "type": "boolean",
+          "default": false,
+          "description": "Read current line aloud when cursor moves."
+        },
+        "codewhisper.llmModel": {
+          "type": "string",
+          "default": "llama-3.3-70b-versatile",
+          "description": "Groq LLM model to use for AI features."
+        },
+        "codewhisper.whisperModel": {
+          "type": "string",
+          "default": "whisper-large-v3-turbo",
+          "description": "Groq Whisper model for voice recognition."
+        },
+        "codewhisper.recordingDuration": {
+          "type": "number",
+          "default": 5,
+          "minimum": 2,
+          "maximum": 30,
+          "description": "How many seconds to record per voice command (seconds)."
+        }
+      }
+    },
+    "menus": {
+      "editor/context": [
+        {
+          "command": "codewhisper.explainCode",
+          "group": "codewhisper@1"
+        },
+        {
+          "command": "codewhisper.fixError",
+          "group": "codewhisper@2"
+        },
+        {
+          "command": "codewhisper.generateTests",
+          "group": "codewhisper@3"
+        },
+        {
+          "command": "codewhisper.commentCode",
+          "group": "codewhisper@4"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile",
+    "test": "node ./out/test/runTest.js",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.85.0",
+    "@vscode/vsce": "^2.22.0",
+    "typescript": "^5.3.0"
+  },
+  "dependencies": {
+    "form-data": "^4.0.0",
+    "node-fetch": "^2.7.0"
+  }
+}

@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>CodeWhisper Audio Host</title>
+  <style>
+    body {
+      background: #1e1e2e;
+      color: #cdd6f4;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      gap: 16px;
+    }
+
+    .icon {
+      font-size: 48px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 18px;
+      color: #89b4fa;
+    }
+
+    p {
+      margin: 0;
+      font-size: 13px;
+      color: #a6adc8;
+      text-align: center;
+    }
+
+    .status {
+      font-size: 13px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      background: #313244;
+      color: #a6e3a1;
+    }
+    
+    .features-list {
+      margin-top: 30px;
+      background: #313244;
+      padding: 15px 25px;
+      border-radius: 8px;
+      text-align: left;
+      border: 1px solid #45475a;
+      max-width: 100%;
+    }
+
+    .features-list h3 {
+      margin: 0 0 10px 0;
+      font-size: 14px;
+      color: #89b4fa;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge {
+      background: #a6e3a1;
+      color: #1e1e2e;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: bold;
+    }
+
+    .features-list ul {
+      margin: 0;
+      padding-left: 20px;
+      font-size: 13px;
+      color: #bac2de;
+    }
+    
+    .features-list li {
+      margin-bottom: 6px;
+    }
+
+    .live-feed-container {
+      margin-top: 20px;
+      max-width: 100%;
+    }
+    .live-feed-container h3 {
+      font-size: 12px;
+      color: #f38ba8;
+      margin: 0 0 8px 0;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .live-feed-container h3::before {
+      content: '';
+      display: block;
+      width: 8px;
+      height: 8px;
+      background-color: #f38ba8;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    .live-feed {
+      background: #1e1e2e;
+      border: 1px solid #45475a;
+      border-radius: 8px;
+      padding: 10px;
+      height: 400px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-family: inherit;
+      font-size: 12px;
+    }
+    .feed-item {
+      display: flex;
+      gap: 8px;
+      color: #a6adc8;
+      animation: fadeIn 0.3s ease-out;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      padding-bottom: 4px;
+    }
+    .feed-item:last-child {
+      border-bottom: none;
+    }
+    .feed-icon { flex-shrink: 0; }
+    .feed-text { word-break: break-word; line-height: 1.4; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(243, 139, 168, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(243, 139, 168, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(243, 139, 168, 0); }
+    }
+  </style>
+</head>
+
+<body>
+  <h2>CodeWhisper Audio Engine</h2>
+  <p>This panel powers voice output and sound alerts.<br>Keep it open for best experience.</p>
+  <div class="status" id="status">Ready</div>
+
+  <div class="features-list">
+    <h3>Capabilities <span class="badge">Powered by Custom Built Model</span></h3>
+    <ul>
+      <li><strong>Smart Voice Control:</strong> Navigate, format, save, and debug</li>
+      <li><strong>AI Code Assistant:</strong> "Write a function for...", "Explain this code"</li>
+      <li><strong>Inline Auto-Fix:</strong> "Fix this error" drops code directly into editor</li>
+      <li><strong>Sound Alerts:</strong> Distinct spatial sounds for errors, saves, & tests</li>
+      <li><strong>Read Aloud:</strong> "Read this file", "Read all my errors"</li>
+    </ul>
+  </div>
+
+  <div class="live-feed-container">
+    <h3>Live Engine Activity</h3>
+    <div class="live-feed" id="liveFeed">
+      <div class="feed-item">
+        <span class="feed-text">> System ready and awaiting voice commands.</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const vscode = acquireVsCodeApi();
+    const statusEl = document.getElementById('status');
+
+    // Notify extension that webview is ready
+    vscode.postMessage({ type: 'ready' });
+
+    // ── Web Audio Context ────────────────────────────────────────
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+
+    function getAudioCtx() {
+      if (!audioCtx || audioCtx.state === 'closed') {
+        audioCtx = new AudioCtx();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    // ── Tone Generator ───────────────────────────────────────────
+    function playTone(freq, duration, type = 'sine', vol = 0.5, delay = 0, fadeOut = true) {
+      const ctx = getAudioCtx();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, ctx.currentTime + delay);
+      gain.gain.setValueAtTime(vol, ctx.currentTime + delay);
+      if (fadeOut) {
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + duration);
+      }
+      osc.start(ctx.currentTime + delay);
+      osc.stop(ctx.currentTime + delay + duration + 0.05);
+    }
+
+    // ── Alert Sound Patterns ─────────────────────────────────────
+    const ALERTS = {
+      error: (vol) => {
+        // Low descending buzz
+        playTone(220, 0.15, 'sawtooth', vol, 0.0);
+        playTone(180, 0.15, 'sawtooth', vol, 0.18);
+        playTone(140, 0.2, 'sawtooth', vol, 0.36);
+      },
+      warning: (vol) => {
+        // Medium double beep
+        playTone(440, 0.12, 'triangle', vol, 0.0);
+        playTone(440, 0.12, 'triangle', vol, 0.2);
+      },
+      cleared: (vol) => {
+        // Ascending success arpeggio
+        playTone(440, 0.1, 'sine', vol, 0.0);
+        playTone(550, 0.1, 'sine', vol, 0.1);
+        playTone(660, 0.2, 'sine', vol, 0.2);
+      },
+      save: (vol) => {
+        // Soft click
+        playTone(800, 0.05, 'sine', vol * 0.5, 0.0);
+      },
+      breakpoint: (vol) => {
+        // Bell ding
+        playTone(880, 0.4, 'sine', vol, 0.0);
+        playTone(1760, 0.3, 'sine', vol * 0.3, 0.05);
+      },
+      testPass: (vol) => {
+        // Happy ascending
+        [261.63, 329.63, 392.0, 523.25].forEach((f, i) => {
+          playTone(f, 0.15, 'sine', vol, i * 0.1);
+        });
+      },
+      testFail: (vol) => {
+        // Sad descending
+        [523.25, 392.0, 329.63, 261.63].forEach((f, i) => {
+          playTone(f, 0.15, 'sawtooth', vol, i * 0.1);
+        });
+      },
+      complete: (vol) => {
+        // Terminal done — two tones
+        playTone(600, 0.12, 'sine', vol, 0.0);
+        playTone(750, 0.18, 'sine', vol, 0.15);
+      },
+      suggestion: (vol) => {
+        // Soft pop
+        playTone(1000, 0.06, 'sine', vol * 0.4, 0.0);
+      },
+    };
+
+    // ── TTS ──────────────────────────────────────────────────────
+    let currentUtterance = null;
+
+    function speakText(text, rate, pitch, volume) {
+      if (!window.speechSynthesis) {
+        statusEl.textContent = 'TTS not supported';
+        vscode.postMessage({ type: 'speakEnd' });
+        return;
+      }
+      window.speechSynthesis.cancel();
+      const utt = new SpeechSynthesisUtterance(text);
+      utt.rate = rate;
+      utt.pitch = pitch;
+      utt.volume = volume;
+      utt.onstart = () => { 
+        statusEl.textContent = '🔊 Speaking...'; 
+        vscode.postMessage({ type: 'speakStart' });
+      };
+      utt.onend = () => { 
+        statusEl.textContent = 'Ready'; 
+        vscode.postMessage({ type: 'speakEnd' });
+      };
+      utt.onerror = (e) => { 
+        statusEl.textContent = 'TTS error: ' + e.error; 
+        vscode.postMessage({ type: 'speakEnd' });
+      };
+      currentUtterance = utt;
+      window.speechSynthesis.speak(utt);
+    }
+
+    // ── Message Handler ──────────────────────────────────────────
+    window.addEventListener('message', (event) => {
+      const msg = event.data;
+      if (!msg || !msg.type) { return; }
+
+      switch (msg.type) {
+        case 'speak':
+          speakText(msg.text, msg.rate || 1.0, msg.pitch || 1.0, msg.volume || 1.0);
+          break;
+
+        case 'stopSpeak':
+          window.speechSynthesis && window.speechSynthesis.cancel();
+          statusEl.textContent = 'Ready';
+          break;
+
+        case 'alert':
+          const fn = ALERTS[msg.alertType];
+          if (fn) {
+            fn(msg.volume || 0.5);
+            statusEl.textContent = `🔔 ${msg.alertType}`;
+            setTimeout(() => { statusEl.textContent = 'Ready'; }, 1500);
+          }
+          break;
+
+        case 'liveEvent':
+          const feed = document.getElementById('liveFeed');
+          if (feed) {
+            const item = document.createElement('div');
+            item.className = 'feed-item';
+            item.innerHTML = `<span class="feed-text">> ${msg.message}</span>`;
+            feed.appendChild(item);
+            feed.scrollTop = feed.scrollHeight;
+          }
+          break;
+      }
+    });
+  </script>
+</body>
+
+</html>

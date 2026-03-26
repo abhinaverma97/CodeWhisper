@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeWhisper Features Dashboard</title>
+    <style>
+        :root {
+            --bg-color: var(--vscode-editor-background, #1e1e1e);
+            --text-color: var(--vscode-editor-foreground, #d4d4d4);
+            --accent-color: var(--vscode-textLink-foreground, #3794ff);
+            --border-color: var(--vscode-panel-border, #444);
+            --card-bg: var(--vscode-editorWidget-background, #252526);
+            --hover-bg: var(--vscode-list-hoverBackground, #2a2d2e);
+        }
+
+        body {
+            font-family: var(--vscode-font-family), sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 30px;
+            box-sizing: border-box;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        h1 {
+            font-size: 2.5em;
+            font-weight: 300;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        h1 span {
+            font-size: 1.2em;
+        }
+
+        .subtitle {
+            color: #888;
+            font-size: 1.1em;
+            margin-top: 0;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            border-color: var(--accent-color);
+        }
+
+        .card-icon {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .card h3 {
+            margin: 0 0 10px 0;
+            color: var(--text-color);
+        }
+
+        .card p {
+            margin: 0 0 15px 0;
+            font-size: 0.9em;
+            color: #aaa;
+        }
+
+        .command-example {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-family: var(--vscode-editor-font-family), monospace;
+            font-size: 0.85em;
+            color: var(--accent-color);
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .command-example span {
+            color: #888;
+            font-size: 0.9em;
+            font-family: var(--vscode-font-family);
+        }
+
+        .section-title {
+            margin: 40px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+            font-weight: 400;
+        }
+
+        .shortcut {
+            display: inline-block;
+            background: var(--border-color);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 0.9em;
+            color: var(--text-color);
+        }
+
+        .alert-legend {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .alert-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background-color: var(--card-bg);
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+        }
+
+        .alert-icon {
+            font-size: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1><span>🎙️</span> CodeWhisper Dashboard</h1>
+        <p class="subtitle">Complete guide to CodeWhisper's natural language features</p>
+    </header>
+
+    <div
+        style="background: rgba(55, 148, 255, 0.1); padding: 15px 20px; border-radius: 8px; border-left: 4px solid var(--accent-color); margin-bottom: 30px;">
+        <h3 style="margin: 0 0 10px 0;">How to use CodeWhisper</h3>
+        <p style="margin: 0; color: #ccc;">Press <span class="shortcut">Ctrl+Shift+V</span> (or <span
+                class="shortcut">Cmd+Shift+V</span> on Mac) to activate the microphone. Wait for the beep, speak your
+            command naturally, and pause for 1 second. The AI will automatically detect when you stop speaking and
+            process your command.</p>
+    </div>
+
+    <h2 class="section-title">🧠 AI Code Understanding</h2>
+    <div class="grid">
+        <div class="card">
+            <div class="card-icon">📖</div>
+            <h3>Explain Code</h3>
+            <p>Select any code snippet or function and ask the AI to explain it in plain English.</p>
+            <div class="command-example">
+                <span>Try saying:</span>
+                "Explain what this python method does"
+                "How does this auth code work?"
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-icon">🔧</div>
+            <h3>Fix Errors</h3>
+            <p>Diagnoses the nearest error or fixes bugs in the code you have selected.</p>
+            <div class="command-example">
+                <span>Try saying:</span>
+                "Fix this error"
+                "Why is this throwing a type error?"
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-icon">📋</div>
+            <h3>Summarize File</h3>
+            <p>Reads through the entire active file and gives you a high-level summary of its purpose.</p>
+            <div class="command-example">
+                <span>Try saying:</span>
+                "Give me a quick summary of this file"
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-icon">🚨</div>
+            <h3>Security Audit</h3>
+            <p>Scans the current file or selection for common security vulnerabilities.</p>
+            <div class="command-example">
+                <span>Try saying:</span>
+                "Scan this page for security issues"
+            </div>
+        </div>
+    </div>
+
+    <h2 class="section-title">✍️ Writing & Editing Code</h2>
+    <div class="grid">
+        <div class="card">
+            <div class="card-icon">✨</div>
+            <h3>Generate Code</h3>
+            <p>Describe what you want to build and the AI will write the code and insert it at your cursor.</p>
+            <div class="command-example">
+                <span>Try saying:</span>
+                "Write a function that fetches user data"
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-icon">📄</div>
+            <h3>Create New File</h3>
+            <p>Opens a new unsaved editor for the language you specify.</p>
+            <div class="command-example">
+                <span>Try saying:</span>
+                "Create a new typescript file"
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-icon">💬</div>
+            <h3>Comment Code</h3>
+            <p>Adds helpful, descriptive comments explaining the selected code blocks.</p>
+            <div class="command-example">
+                <span>Try saying:</span>
+                "Add comments to this method"
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-icon">🧪</div>
+            <h3>Generate Tests</h3>
+            <p>Creates comprehensive unit tests for the selected function in a new tab.</p>
+            <div class="command-example">
+                <span>Try saying:</span>
+                "Create unit tests for the login function"
+            </div>
+        </div>
+    </div>
+
+    <h2 class="section-title">🧭 Editor Navigation & Reading</h2>
+    <div class="grid">
+        <div class="card">
+            <div class="card-icon">👁️</div>
+            <h3>Read Code</h3>
+            <p>Reads the current line or the entire file aloud using Text-to-Speech.</p>
+            <div class="command-example">
+                <span>Try saying:</span>
+                "Read this line" / "Read the whole file"
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-icon">🚦</div>
+            <h3>Jump to Lines / Symbols</h3>
+            <p>Navigate instantly without needing to search or scroll.</p>
+            <div class="command-example">
+                <span>Try saying:</span>
+                "Jump down to line 42" / "Go to handleSubmit"
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-icon">🐞</div>
+            <h3>Read Errors</h3>
+            <p>Lists all compiler errors and warnings in the current file aloud.</p>
+            <div class="command-example">
+                <span>Try saying:</span>
+                "Find all the problems in this file"
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-icon">⚙️</div>
+            <h3>Editor Actions</h3>
+            <p>Perform common VSCode actions without touching the keyboard.</p>
+            <div class="command-example">
+                <span>Try saying:</span>
+                "Save the file" / "Format document" / "Open terminal"
+            </div>
+        </div>
+    </div>
+
+    <h2 class="section-title">🔔 Sound Alerts Legend</h2>
+    <p style="color: #aaa; margin-bottom: 20px;">CodeWhisper uses procedural Web Audio to give you spatial awareness of
+        background events.</p>
+    <div class="alert-legend">
+        <div class="alert-item"><span class="alert-icon">📉</span> Low buzzing drone — <strong>New Error
+                Detected</strong></div>
+        <div class="alert-item"><span class="alert-icon">🟡</span> Double beep — <strong>New Warning Detected</strong>
+        </div>
+        <div class="alert-item"><span class="alert-icon">✨</span> Ascending chime — <strong>All errors cleared!</strong>
+        </div>
+        <div class="alert-item"><span class="alert-icon">💾</span> Soft click — <strong>File Saved</strong></div>
+        <div class="alert-item"><span class="alert-icon">🛑</span> Bell ding — <strong>Debugger Breakpoint Hit</strong>
+        </div>
+        <div class="alert-item"><span class="alert-icon">✅</span> Happy arpeggio — <strong>Test Passed</strong></div>
+        <div class="alert-item"><span class="alert-icon">❌</span> Sad descending — <strong>Test Failed</strong></div>
+        <div class="alert-item"><span class="alert-icon">📝</span> Soft pop — <strong>Code Suggestion Generated</strong>
+        </div>
+    </div>
+</body>
+
+</html>
