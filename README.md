@@ -152,7 +152,6 @@ voicecode/
 - **VSCode Extension API** — deep editor integration
 
 ---
-
 ## 📦 Package Extension
 
 ```bash
