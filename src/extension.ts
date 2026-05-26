@@ -293,7 +293,7 @@ async function handleExplainCode(): Promise<void> {
     if (!code.trim()) { speak('No code selected or no file open.'); return; }
 
     const lang = getEditorLanguage();
-    speak('Analyzing code. Please wait.');
+    speak('Analyzing the selected code. Please wait.');
 
     await withProgress('CodeWhisper: Explaining code...', async () => {
         const response = await chatCompletion(
